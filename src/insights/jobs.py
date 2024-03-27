@@ -14,9 +14,11 @@ class ProcessJobs:
     def get_unique_job_types(self) -> List[str]:
         return list(set(job['job_type'] for job in self.jobs_list))
 
-    def filter_by_multiple_criteria(self, crite: Dict[str, str]) -> List[dict]:
+    def filter_by_multiple_criteria(
+        self, criteria: Dict[str, str]
+    ) -> List[dict]:
         filtered_jobs = []
         for job in self.jobs_list:
-            if all(job[key] == value for key, value in crite.items()):
+            if all(job[key] == value for key, value in criteria.items()):
                 filtered_jobs.append(job)
         return filtered_jobs
