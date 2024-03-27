@@ -28,7 +28,9 @@ class ProcessSalaries(ProcessJobs):
                 pass
         return min_salary
 
-    def matches_salary_range(self, item: Dict, salary: Union[int, str]) -> bool:
+    def matches_salary_range(
+        self, item: Dict, salary: Union[int, str]
+    ) -> bool:
         if isinstance(salary, str):
             salary = int(salary)
         min_salary = int(item.get("min_salary", 0))
