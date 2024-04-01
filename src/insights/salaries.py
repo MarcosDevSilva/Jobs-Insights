@@ -7,41 +7,52 @@ class ProcessSalaries(ProcessJobs):
         super().__init__()
 
     def get_max_salary(self) -> int:
-        max_salary = 0
+        big_sal = 0
         for item in self.jobs_list:
             try:
-                salary = int(item.get("max_salary", 0))
-                if salary > max_salary:
-                    max_salary = salary
+                salari = int(item.get("max_salary", 0))
+                if salari > big_sal:
+                    big_sal = salari
             except ValueError:
                 pass
-        return max_salary
+        return big_sal
 
     def get_min_salary(self) -> int:
-        min_salary = self.get_max_salary()
+        small_sal = self.get_max_salary()
         for item in self.jobs_list:
             try:
-                salary = int(item.get("min_salary", 0))
-                if salary < min_salary:
-                    min_salary = salary
+                salari = int(item.get("min_salary", 0))
+                if salari < small_sal:
+                    small_sal = salari
             except ValueError:
                 pass
-        return min_salary
+        return small_sal
 
-    def matches_salary_range(
-        self, item: Dict, salary: Union[int, str]
-    ) -> bool:
-        if isinstance(salary, str):
-            salary = int(salary)
-        min_salary = int(item.get("min_salary", 0))
-        max_salary = int(item.get("max_salary", 0))
-        return min_salary <= salary <= max_salary
+    def matches_salary_range(self, job: Dict, salari: Union[int, str]) -> bool:
+        try:
+            small_sall = int(job["min_salary"])
+            big_sal = int(job["max_salary"])
+            salari = int(salari)
+
+            if small_sall > big_sal:
+                raise ValueError
+
+            return small_sall <= salari <= big_sal
+
+        except (ValueError, TypeError, KeyError):
+            raise ValueError("Salario invalido")
 
     def filter_by_salary_range(
-        self, jobs: List[Dict], salary: Union[str, int]
+        self, jobs: List[dict], salary: Union[str, int]
     ) -> List[Dict]:
-        filtered_jobs = []
+        items = []
+
         for item in jobs:
-            if self.matches_salary_range(item, salary):
-                filtered_jobs.append(item)
-        return filtered_jobs
+            try:
+                if self.matches_salary_range(item, salary):
+                    items.append(item)
+
+            except ValueError:
+                continue
+
+        return items
